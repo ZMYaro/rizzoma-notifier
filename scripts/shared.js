@@ -31,12 +31,12 @@ function updateAlarm(mins) {
  * Fetch waves that have been updated since the last refresh and pass them to the callback function
  * @param {Function} successCallback - The function to which the wave data should be sent
  */
-function fetchNewUnreadWaves(successCallback) {
+function fetchNewUnreadWaves(successCallback, failureCallback) {
 	console.log('Preparing to fetch new unread waves.');
 	chrome.storage.local.get('lastRefreshTime', function(items) {
 		var lastRefreshTime = items.lastRefreshTime || 0;
 		chrome.storage.local.set({'lastRefreshTime': Math.floor(Date.now() / 1000)}, function() {});
-		fetchUnreadWaves(lastRefreshTime, successCallback);
+		fetchUnreadWaves(lastRefreshTime, successCallback, failureCallback);
 	});
 }
 /**
@@ -44,7 +44,7 @@ function fetchNewUnreadWaves(successCallback) {
  * @param {Number} lastSearchDate - If specified, only waves changed since this timestamp will be returned
  * @param {Function} successCallback - The function to which the wave data should be sent
  */
-function fetchUnreadWaves(lastSearchDate, successCallback) {
+function fetchUnreadWaves(lastSearchDate, successCallback, failureCallback) {
 	console.log('Preparing to fetch waves changed since ' + lastSearchDate + '.');
 	// If lastSearchDate has no value, set it to zero (fetch all waves).
 	if(lastSearchDate === null || lastSearchDate === undefined) {
@@ -63,11 +63,16 @@ function fetchUnreadWaves(lastSearchDate, successCallback) {
 				if(xhr.readyState === 4) {
 					if(xhr.status === 200) {
 						var response = JSON.parse(xhr.responseText);
-						if(response.data && response.data.searchResults) {
+						// The presence of response.data.lastSearchDate is
+						// an indicator that the user is signed in.
+						if(response.data && response.data.lastSearchDate &&
+								response.data.searchResults) {
 							successCallback(response.data.searchResults);
 						} else {
-							// TODO: dispError();
+							failureCallback();
 						}
+					} else {
+						failureCallback();
 					}
 				}
 			};

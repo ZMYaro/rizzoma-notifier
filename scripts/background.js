@@ -1,11 +1,7 @@
 
 
 function makeIFrame() {
-	// Remove existing iframes.
-	var iframes = document.getElementsByTagName('iframe');
-	while(iframes.length > 0) {
-		iframes[0].parentElement.removeChild(iframes[0]);
-	}
+	removeIFrame();
 	
 	var iframe = document.createElement('iframe');
 	iframe.src = 'https://rizzoma.com/topic/';
@@ -13,9 +9,19 @@ function makeIFrame() {
 	iframe.name = 'rizNotifIFrame';
 	document.body.appendChild(iframe);
 }
+function removeIFrame() {
+	// Remove existing iframes.
+	var iframes = document.getElementsByTagName('iframe');
+	while(iframes.length > 0) {
+		iframes[0].parentElement.removeChild(iframes[0]);
+	}
+}
 
 
 function notifUnreadWaves(waves) {
+	// If waves were fetched, the iframe is no longer necessary.
+	removeIFrame();
+	
 	console.log('Checking which waves are unread.');
 	
 	// Create arrays for the unread wave objects and the notification items.
@@ -74,7 +80,7 @@ function notifUnreadWaves(waves) {
 chrome.alarms.onAlarm.addListener(function(alarm) {
 	if(alarm.name === REFRESH_ALARM_NAME) {
 		console.log('Refresh alarm fired.');
-		fetchNewUnreadWaves(notifUnreadWaves);
+		fetchNewUnreadWaves(notifUnreadWaves, makeIFrame);
 	}
 });
 chrome.notifications.onClicked.addListener(function(notificationId) {
@@ -88,7 +94,7 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 window.addEventListener('load', function() {
 	console.log('Extension started.');
 	makeIFrame();
-	fetchNewUnreadWaves(notifUnreadWaves);
+	fetchNewUnreadWaves(notifUnreadWaves, makeIFrame);
 	updateAlarm();
 }, false);
 
