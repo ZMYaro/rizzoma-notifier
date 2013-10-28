@@ -16,7 +16,8 @@
 	}],
 	
 	"icons": {
-	
+		"48": "images/unread_3_48.png",
+		"128": "images/unread_3_128.png"
 	},
 	
 	"permissions": [
