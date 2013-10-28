@@ -89,6 +89,8 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 	} else {
 		loadRizTab(notificationId);
 	}
+	// Clear the notification that was clicked.
+	chrome.notifications.clear(notificationId, function(){});
 });
 
 window.addEventListener('load', function() {
