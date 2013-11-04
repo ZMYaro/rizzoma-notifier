@@ -127,7 +127,9 @@ p {
 	line-height: 17px;
 	margin: 6px 0;
 }
-
+.sideBar, header {
+	z-index: 3;
+}
 header {
 	position: fixed;
 	top: 0;
