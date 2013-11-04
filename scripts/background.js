@@ -101,12 +101,12 @@ window.addEventListener('load', function() {
 }, false);
 
 /*chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-	if(message === "GET_ACCESS_TOKEN") {
+	if(message === 'GET_ACCESS_TOKEN') {
 		chrome.tabs.query({
-			url: "*://rizzoma.com/topic/*"
+			url: '*://rizzoma.com/topic/*'
 		}, function(tabs) {
 			if(tabs.length > 0) {
-				chrome.tabs.sendMessage(tabs[0].id, "GET_ACCESS_TOKEN", function(response) {
+				chrome.tabs.sendMessage(tabs[0].id, 'GET_ACCESS_TOKEN', function(response) {
 					sendResponse(response);
 				});
 			}

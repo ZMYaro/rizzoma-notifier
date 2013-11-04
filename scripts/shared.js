@@ -1,5 +1,5 @@
-var RIZ_API_URL = "https://rizzoma.com/api/rest/1/wave/searchBlipContent/?queryString=&ptagNames=FOLLOW";
-var REFRESH_ALARM_NAME = "refresh";
+var RIZ_API_URL = 'https://rizzoma.com/api/rest/1/wave/searchBlipContent/?queryString=&ptagNames=FOLLOW';
+var REFRESH_ALARM_NAME = 'refresh';
 var defaults = {
 	refreshTime: 1
 };
@@ -51,14 +51,14 @@ function fetchUnreadWaves(lastSearchDate, successCallback, failureCallback) {
 		lastSearchDate = 0;
 	}
 	// Fetch the saved expressSession id.
-	chrome.storage.local.get("expressSessionId", function(items) {
+	chrome.storage.local.get('expressSessionId', function(items) {
 		if(!items.expressSessionId) {
 			makeIFrame();
 		} else {
 			var apiURL = RIZ_API_URL + '&lastSearchDate=' + lastSearchDate +
 				'&ACCESS_TOKEN=' + encodeURIComponent(items.expressSessionId);
 			var xhr = new XMLHttpRequest();
-			xhr.open("GET", apiURL, true);
+			xhr.open('GET', apiURL, true);
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState === 4) {
 					if(xhr.status === 200) {
