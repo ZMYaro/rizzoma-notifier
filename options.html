@@ -3,6 +3,7 @@
 	<head>
 		<title>Options - Notifier for Rizzoma</title>
 		<link rel="stylesheet" type="text/css" href="styles/options.css" />
+		<script type="text/javascript" src="scripts/shared.js"></script>
 		<script type="text/javascript" src="scripts/options.js"></script>
 	</head>
 	<body>
@@ -24,7 +25,14 @@
 			<h1>Notifier for Rizzoma</h1>
 		</header>
 		<section>
-			<h3 style="text-align: center;">Options coming soon</h3>
+			<h3>Refresh interval</h3>
+			<p>How frequently should Notifier for Rizzoma check for new messages?</p>
+			<select id="refreshInterval" disabled="disabled">
+				<option value="1">1 minute</option>
+				<option value="5">5 minutes</option>
+				<option value="15">15 minutes</option>
+				<option value="30">30 minutes</option>
+			</select>
 		</section>
 	</body>
 </html>

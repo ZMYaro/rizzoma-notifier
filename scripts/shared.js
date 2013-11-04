@@ -4,7 +4,7 @@ var defaults = {
 	refreshTime: 1
 };
 
-function updateAlarm(mins) {
+function updateAlarm() {
 	chrome.storage.local.get({
 		refreshTime: defaults.refreshTime
 	}, function(items) {

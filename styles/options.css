@@ -90,6 +90,9 @@ h3 {
 	margin-bottom: 0.8em;
 	color: black;
 }
+p {
+	margin: 0.65em 0;
+}
 
 .sideBar {
 	position: fixed;
