@@ -4,6 +4,8 @@
 	"version": "0.1",
 	"description": "Get notified of new messages in Rizzoma.",
 	
+	"options_page": "options.html",
+	
 	"background": {
 		"page": "background.html",
 		"persistent": false
