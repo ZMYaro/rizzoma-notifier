@@ -1,4 +1,17 @@
 var RIZ_API_URL = 'https://rizzoma.com/api/rest/1/wave/searchBlipContent/?queryString=&ptagNames=FOLLOW';
+var RIZ_ICONS = {
+	normal: {
+		'19': 'images/riz_icon_19.png',
+		'38': 'images/riz_icon_38.png'
+	},
+	gray: {
+		'19': 'images/riz_icon_gray_19.png',
+		'38': 'images/riz_icon_gray_38.png'
+	}
+};
+var COLORS = {
+	unreadGreen: "#95D529"
+};
 var REFRESH_ALARM_NAME = 'refresh';
 var defaults = {
 	refreshTime: 1
@@ -88,7 +101,8 @@ function loadRizTab(waveId) {
 		// If a Rizzoma tab exists, update its URL and bring it to the front.
 		if(tabs.length > 0) {
 			chrome.tabs.update(tabs[0].id, {
-				url: 'https://rizzoma.com/topic/' + waveId,
+				// Only update the URL if a waveId was specified.
+				url: (waveId) ? ('https://rizzoma.com/topic/' + waveId) : null,
 				active: true
 			});
 			chrome.windows.update(tabs[0].windowId, {

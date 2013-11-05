@@ -42,6 +42,7 @@ function notifUnreadWaves(waves) {
 	}
 	
 	console.log(notifItems.length + ' waves are unread.');
+	updateBrowserAction(unreadWaves.length);
 	
 	if(notifItems.length === 1) {
 		// If there is only one unread wave, display its data as a basic notification.
@@ -77,10 +78,34 @@ function notifUnreadWaves(waves) {
 	}
 }
 
+/**
+ * Updates the browser action icon and unread count.  If the unread
+ * count is null, it assumes an error state and displays a gray icon.
+ * @param {Number} unreadCount - The number of unread waves
+ */
+function updateBrowserAction(unreadCount) {
+	if(typeof unreadCount === 'underfined' || unreadCount === null) {
+		chrome.browserAction.setIcon({path: RIZ_ICONS.gray});
+		chrome.browserAction.setBadgeText({text: ''});
+	} else {
+		chrome.browserAction.setIcon({path: RIZ_ICONS.normal});
+		chrome.browserAction.setBadgeBackgroundColor({color: COLORS.unreadGreen});
+		chrome.browserAction.setBadgeText({text: '' + unreadCount});
+	}
+}
+
+/**
+ * Responds to an update failing (presumably due to an invalid expressSessionId)
+ */
+function updateFailed() {
+	updateBrowserAction(null);
+	makeIFrame();
+}
+
 chrome.alarms.onAlarm.addListener(function(alarm) {
 	if(alarm.name === REFRESH_ALARM_NAME) {
 		console.log('Refresh alarm fired.');
-		fetchNewUnreadWaves(notifUnreadWaves, makeIFrame);
+		fetchNewUnreadWaves(notifUnreadWaves, updateFailed);
 	}
 });
 chrome.notifications.onClicked.addListener(function(notificationId) {
@@ -95,8 +120,12 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 
 window.addEventListener('load', function() {
 	console.log('Extension started.');
+	chrome.browserAction.onClicked.addListener(function(tab) {
+		fetchNewUnreadWaves(notifUnreadWaves, updateFailed);
+		loadRizTab('');
+	});
 	makeIFrame();
-	fetchNewUnreadWaves(notifUnreadWaves, makeIFrame);
+	fetchNewUnreadWaves(notifUnreadWaves, updateFailed);
 	updateAlarm();
 }, false);
 
