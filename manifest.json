@@ -1,6 +1,6 @@
 {
 	"manifest_version": 2,
-	"name": "Notifier for Rizzoma",
+	"name": "Notifier for Rizzoma (beta)",
 	"version": "0.2",
 	"description": "Get notified of new messages in Rizzoma.",
 	
