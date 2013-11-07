@@ -18,33 +18,40 @@ function removeIFrame() {
 }
 
 
-function notifUnreadWaves(waves) {
+function processUnreadWaves(waves) {
 	// If waves were fetched, the iframe is no longer necessary.
 	removeIFrame();
 	
 	console.log('Checking which waves are unread.');
 	
-	// Create arrays for the unread wave objects and the notification items.
+	// Create an array for the unread wave objects.
 	var unreadWaves = [];
-	var notifItems = [];
-	// For each wave object...
+	// For each wave object,
 	for(var i = 0; i < waves.length; i++) {
 		// If this wave is unread,
 		if(waves[i].totalUnreadBlipCount > 0) {
-			// Add it to the array of unread waves,
+			// Add it to the array of unread waves.
 			unreadWaves.push(waves[i]);
-			// And add its title and snippet to the array of notification items.
-			notifItems.push({
-				title: waves[i].title,
-				message: waves[i].snippet
-			});
 		}
 	}
 	
-	console.log(notifItems.length + ' waves are unread.');
+	console.log(unreadWaves.length + ' waves are unread.');
+	
+	// Update the browser action with the new unread count.
 	updateBrowserAction(unreadWaves.length);
 	
-	if(notifItems.length === 1) {
+	// If desktop notifications are enabled, display one.
+	chrome.storage.local.get({
+		enableNotifs: defaults.enableNotifs
+	}, function(items) {
+		if(items.enableNotifs) {
+			notifUnreadWaves(unreadWaves);
+		}
+	});
+}
+
+function notifUnreadWaves(unreadWaves) {
+	if(unreadWaves.length === 1) {
 		// If there is only one unread wave, display its data as a basic notification.
 		chrome.notifications.create(unreadWaves[0].waveId, {
 			type: 'basic',
@@ -59,8 +66,19 @@ function notifUnreadWaves(waves) {
 				console.log('Notification \"' + notifId + '\" successfully created.');
 			}
 		});
-	} else if(notifItems.length > 1) {
+	} else if(unreadWaves.length > 1) {
 		// If there are multiple unread waves, display their data as a list notification.
+		
+		// Create an array for the notification items.
+		var notifItems = [];
+		// For each unread wave,
+		for(var i = 0; i < unreadWaves.length; i++) {
+			// Add its title and snippet to the array of notification items.
+			notifItems.push({
+				title: unreadWaves[i].title,
+				message: unreadWaves[i].snippet
+			});
+		}
 		chrome.notifications.create('multi', {
 			type: 'list',
 			title: notifItems.length + ' new messages',
@@ -105,7 +123,7 @@ function updateFailed() {
 chrome.alarms.onAlarm.addListener(function(alarm) {
 	if(alarm.name === REFRESH_ALARM_NAME) {
 		console.log('Refresh alarm fired.');
-		fetchNewUnreadWaves(notifUnreadWaves, updateFailed);
+		fetchNewUnreadWaves(processUnreadWaves, updateFailed);
 	}
 });
 chrome.notifications.onClicked.addListener(function(notificationId) {
@@ -121,11 +139,11 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 window.addEventListener('load', function() {
 	console.log('Extension started.');
 	chrome.browserAction.onClicked.addListener(function(tab) {
-		fetchNewUnreadWaves(notifUnreadWaves, updateFailed);
+		fetchNewUnreadWaves(processUnreadWaves, updateFailed);
 		loadRizTab('');
 	});
 	makeIFrame();
-	fetchNewUnreadWaves(notifUnreadWaves, updateFailed);
+	fetchNewUnreadWaves(processUnreadWaves, updateFailed);
 	updateAlarm();
 }, false);
 
