@@ -43,19 +43,32 @@ function goToPage(e) {
 
 function setUpEventListeners() {
 	document.getElementById('refreshInterval').addEventListener('change', function(e) {
+		e.target.disabled = true;
 		chrome.storage.local.set({
 			refreshTime: e.target.value
 		}, function() {
+			e.target.disabled = false;
 			updateAlarm();
+		});
+	}, false);
+	document.getElementById('enableNotifs').addEventListener('change', function(e) {
+		e.target.disabled = true;
+		chrome.storage.local.set({
+			enableNotifs: e.target.checked
+		}, function() {
+			e.target.disabled = false;
 		});
 	}, false);
 }
 function loadSavedOptions() {
 	chrome.storage.local.get({
-		refreshTime: defaults.refreshTime
+		refreshTime: defaults.refreshTime,
+		enableNotifs: defaults.enableNotifs
 	}, function(items) {
 		document.getElementById('refreshInterval').value = items.refreshTime;
 		document.getElementById('refreshInterval').disabled = false;
+		document.getElementById('enableNotifs').checked = items.enableNotifs;
+		document.getElementById('enableNotifs').disabled = false;
 	});
 }
 

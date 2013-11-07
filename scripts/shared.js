@@ -14,7 +14,8 @@ var COLORS = {
 };
 var REFRESH_ALARM_NAME = 'refresh';
 var defaults = {
-	refreshTime: 1
+	refreshTime: 1,
+	enableNotifs: true
 };
 
 function updateAlarm() {
