@@ -24,20 +24,6 @@ function updateAlarm() {
 		chrome.alarms.create(REFRESH_ALARM_NAME, {
 			periodInMinutes: items.refreshTime
 		});
-		
-		chrome.notifications.create('alarmset', {
-			type: 'basic',
-			title: 'Test',
-			message: 'Alarm created.',
-			iconUrl: chrome.extensions.getURL('/images/riz_icon_128.png')
-		}, function(notifId) {
-			if(chrome.runtime.lastError) {
-				console.error('Error creating notification \"' + notifId + '\": ');
-				console.error(chrome.runtime.lastError);
-			} else {
-				console.log('Notification \"' + notifId + '\" successfully created.');
-			}
-		});
 	});
 }
 /**
