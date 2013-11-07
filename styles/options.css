@@ -2,7 +2,7 @@ body {
 	margin: 0;
 	padding-left: 155px; /* width of sidebar */
 	padding-top: 53px; /* height of header */
-	font-family: 'Segoe UI', Tahoma, sans-serif;
+	font-family: sans-serif;
 	font-size: 12px;
 	color: rgb(48, 57, 66);
 }

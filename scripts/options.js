@@ -1,9 +1,27 @@
 
 
 function init() {
+	loadOSStyles();
 	setUpChromeLinks();
 	setUpEventListeners();
 	loadSavedOptions();
+}
+function loadOSStyles() {
+	var osStyle = document.createElement('link');
+	osStyle.rel = 'stylesheet';
+	osStyle.type = 'text/css';
+	if(navigator.userAgent.indexOf('Windows') !== -1) {
+		osStyle.href = 'styles/options-win.css';
+	} else if(navigator.userAgent.indexOf('Macintosh') !== -1) {
+		osStyle.href = 'styles/options-mac.css';
+	} else if(navigator.userAgent.indexOf('CrOS') !== -1) {
+		osStyle.href = 'styles/options-cros.css';
+		// Change the “Chrome” label to “Chrome OS” on CrOS.
+		document.querySelector('.sideBar h1').innerText = 'Chrome OS';
+	} else {
+		osStyle.href = 'styles/options-linux.css';
+	}
+	document.head.appendChild(osStyle);
 }
 function setUpChromeLinks() {
 	// Get the list of <a>s.
