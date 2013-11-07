@@ -59,16 +59,27 @@ function setUpEventListeners() {
 			e.target.disabled = false;
 		});
 	}, false);
+	document.getElementById('enableSound').addEventListener('change', function(e) {
+		e.target.disabled = true;
+		chrome.storage.local.set({
+			enableSound: e.target.checked
+		}, function() {
+			e.target.disabled = false;
+		});
+	}, false);
 }
 function loadSavedOptions() {
 	chrome.storage.local.get({
 		refreshTime: defaults.refreshTime,
-		enableNotifs: defaults.enableNotifs
+		enableNotifs: defaults.enableNotifs,
+		enableSound: defaults.enableSound
 	}, function(items) {
 		document.getElementById('refreshInterval').value = items.refreshTime;
 		document.getElementById('refreshInterval').disabled = false;
 		document.getElementById('enableNotifs').checked = items.enableNotifs;
 		document.getElementById('enableNotifs').disabled = false;
+		document.getElementById('enableSound').checked = items.enableSound;
+		document.getElementById('enableSound').disabled = false;
 	});
 }
 
