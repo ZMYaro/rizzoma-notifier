@@ -52,6 +52,20 @@
 			},
 			
 			/**
+			 * Clears the specified notification.
+			 * @param {String} notifId - The id of the notification to be cleared.
+			 * @param {Function} callback - Called to indicate whether a matching notification existed.
+			 */
+			clear: function(notifId, callback) {
+				if(notifId in notifs) {
+					notifs[notifId].cancel();
+					callback(true);
+				} else {
+					callback(false);
+				}
+			},
+			
+			/**
 			 * The user clicked in a non-button area of the notification.
 			 */
 			onClicked: {
