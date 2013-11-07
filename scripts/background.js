@@ -41,11 +41,16 @@ function processUnreadWaves(waves) {
 	updateBrowserAction(unreadWaves.length);
 	
 	// If desktop notifications are enabled, display one.
+	// Same for audio notifications.
 	chrome.storage.local.get({
-		enableNotifs: defaults.enableNotifs
+		enableNotifs: defaults.enableNotifs,
+		enableSound: defaults.enableSound
 	}, function(items) {
 		if(items.enableNotifs) {
 			notifUnreadWaves(unreadWaves);
+		}
+		if(items.enableSound && unreadWaves.length > 0) {
+			document.getElementById('notifSound').play();
 		}
 	});
 }
