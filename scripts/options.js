@@ -45,7 +45,7 @@ function setUpEventListeners() {
 	document.getElementById('refreshInterval').addEventListener('change', function(e) {
 		e.target.disabled = true;
 		chrome.storage.local.set({
-			refreshTime: e.target.value
+			refreshTime: parseInt(e.target.value)
 		}, function() {
 			e.target.disabled = false;
 			updateAlarm();
