@@ -18,8 +18,8 @@
 	}],
 	
 	"icons": {
-		"48": "images/unread_1_48.png",
-		"128": "images/unread_1_128.png"
+		"48": "images/ext_icon_48.png",
+		"128": "images/ext_icon_128.png"
 	},
 	
 	"browser_action": {
