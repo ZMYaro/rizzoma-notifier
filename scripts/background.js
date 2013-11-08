@@ -84,11 +84,16 @@ function notifUnreadWaves(unreadWaves) {
 				message: unreadWaves[i].snippet
 			});
 		}
+		
+		// Select the icon with the current unread count (or “9+” if ≥ 9).
+		var iconURL = '/images/unread_' +
+			((unreadWaves.length < 9) ? unreadWaves.length : '9') + '_128.png';
+		
 		chrome.notifications.create('multi', {
 			type: 'list',
 			title: notifItems.length + ' new messages',
 			message: '',
-			iconUrl: chrome.extension.getURL('/images/riz_icon_128.png'),
+			iconUrl: chrome.extension.getURL(iconURL),
 			items: notifItems
 		}, function(notifId) {
 			if(chrome.runtime.lastError) {
