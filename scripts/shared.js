@@ -34,11 +34,12 @@ function updateAlarm() {
  */
 function fetchNewUnreadWaves(successCallback, failureCallback) {
 	console.log('Preparing to fetch new unread waves.');
-	chrome.storage.local.get('lastRefreshTime', function(items) {
+	/*chrome.storage.local.get('lastRefreshTime', function(items) {
 		var lastRefreshTime = items.lastRefreshTime || 0;
 		chrome.storage.local.set({'lastRefreshTime': Math.floor(Date.now() / 1000)}, function() {});
 		fetchUnreadWaves(lastRefreshTime, successCallback, failureCallback);
-	});
+	});*/
+	fetchUnreadWaves(0, successCallback, failureCallback);
 }
 /**
  * Fetch unread waves and pass them to the callback function
