@@ -40,18 +40,25 @@ function processUnreadWaves(waves) {
 	// Update the browser action with the new unread count.
 	updateBrowserAction(unreadWaves.length);
 	
-	// If desktop notifications are enabled, display one.
-	// Same for audio notifications.
 	chrome.storage.local.get({
 		enableNotifs: defaults.enableNotifs,
-		enableSound: defaults.enableSound
+		enableSound: defaults.enableSound,
+		lastUnreadWaves: []
 	}, function(items) {
-		if(items.enableNotifs) {
-			notifUnreadWaves(unreadWaves);
+		// If the new list of unread waves is different,
+		if(unreadWaves.join(',') !== items.lastUnreadWaves.join(',')) {
+			// If desktop notifications are enabled, display one.
+			if(items.enableNotifs) {
+				notifUnreadWaves(unreadWaves);
+			}
+			// If sound notifications are enabled, play a sound.
+			if(items.enableSound && unreadWaves.length > 0) {
+				document.getElementById('notifSound').play();
+			}
 		}
-		if(items.enableSound && unreadWaves.length > 0) {
-			document.getElementById('notifSound').play();
-		}
+		chrome.storage.local.set({
+			lastUnreadWaves: unreadWaves
+		});
 	});
 }
 
