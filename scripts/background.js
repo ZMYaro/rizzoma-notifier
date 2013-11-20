@@ -69,7 +69,7 @@ function notifUnreadWaves(unreadWaves) {
 			type: 'basic',
 			title: unreadWaves[0].title,
 			message: unreadWaves[0].snippet,
-			iconUrl: chrome.extension.getURL('/images/riz_icon_128.png')
+			iconUrl: chrome.extension.getURL('/images/notif_icon_128.png')
 		}, function(notifId) {
 			if(chrome.runtime.lastError) {
 				console.error('Error creating notification \"' + notifId + '\": ');
@@ -92,15 +92,11 @@ function notifUnreadWaves(unreadWaves) {
 			});
 		}
 		
-		// Select the icon with the current unread count (or “9+” if ≥ 9).
-		var iconURL = '/images/unread_' +
-			((unreadWaves.length < 9) ? unreadWaves.length : '9') + '_128.png';
-		
 		chrome.notifications.create('multi', {
 			type: 'list',
 			title: notifItems.length + ' new messages',
 			message: '',
-			iconUrl: chrome.extension.getURL(iconURL),
+			iconUrl: chrome.extension.getURL('/images/notif_icon_128.png'),
 			items: notifItems
 		}, function(notifId) {
 			if(chrome.runtime.lastError) {
