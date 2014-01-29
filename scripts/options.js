@@ -42,44 +42,45 @@ function goToPage(e) {
 }
 
 function setUpEventListeners() {
-	document.getElementById('refreshInterval').addEventListener('change', function(e) {
-		e.target.disabled = true;
-		chrome.storage.local.set({
-			refreshTime: parseInt(e.target.value)
-		}, function() {
-			e.target.disabled = false;
-			updateAlarm();
-		});
-	}, false);
-	document.getElementById('enableNotifs').addEventListener('change', function(e) {
-		e.target.disabled = true;
-		chrome.storage.local.set({
-			enableNotifs: e.target.checked
-		}, function() {
-			e.target.disabled = false;
-		});
-	}, false);
-	document.getElementById('enableSound').addEventListener('change', function(e) {
-		e.target.disabled = true;
-		chrome.storage.local.set({
-			enableSound: e.target.checked
-		}, function() {
-			e.target.disabled = false;
-		});
-	}, false);
+	for(setting in defaults) {
+		document.getElementById(setting).addEventListener('change', setSetting, false);
+	}
 }
+function setSetting(e) {
+	var newSetting = {};
+	if(e.target.tagName.toLowerCase() === 'input' &&
+			e.target.type.toLowerCase() === 'checkbox') {
+		newSetting[e.target.id] = e.target.checked;
+	} else {
+		newSetting[e.target.id] = e.target.value;
+	}
+	chrome.storage.local.set(newSetting, function() {
+		if(chrome.runtime.lastError) {
+			alert("Something went wrong: " + chrome.runtime.lastError);
+		}
+	});
+}
+
 function loadSavedOptions() {
-	chrome.storage.local.get({
-		refreshTime: defaults.refreshTime,
-		enableNotifs: defaults.enableNotifs,
-		enableSound: defaults.enableSound
-	}, function(items) {
-		document.getElementById('refreshInterval').value = items.refreshTime;
-		document.getElementById('refreshInterval').disabled = false;
-		document.getElementById('enableNotifs').checked = items.enableNotifs;
-		document.getElementById('enableNotifs').disabled = false;
-		document.getElementById('enableSound').checked = items.enableSound;
-		document.getElementById('enableSound').disabled = false;
+	chrome.storage.local.get(defaults, function(settings) {
+		// For each setting,
+		for(setting in settings) {
+			// Get its form element.
+			var formElem = document.getElementById(setting);
+			
+			// Set its form element's value.
+			if(formElem.tagName.toLowerCase() === "input" &&
+					formElem.type.toLowerCase() === "checkbox") {
+				// Whether the element is checked (if it is a checkbox).
+				formElem.checked = settings[setting];
+			} else {
+				// The element's value (if it is a normal form element).
+				formElem.value = settings[setting];
+			}
+			
+			// Enable its form element.
+			formElem.disabled = false;
+		}
 	});
 }
 
