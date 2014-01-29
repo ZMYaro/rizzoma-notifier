@@ -16,6 +16,7 @@ var REFRESH_ALARM_NAME = 'refresh';
 var defaults = {
 	refreshTime: 1,
 	enableNotifs: true,
+	hideNotifsOnRiz: false,
 	enableSound: true
 };
 

@@ -28,7 +28,7 @@
 		<section>
 			<h3>Refresh interval</h3>
 			<p>How frequently should Notifier for Rizzoma check for new messages?</p>
-			<select id="refreshInterval" disabled="disabled">
+			<select id="refreshTime" disabled="disabled">
 				<option value="1">1 minute</option>
 				<option value="5">5 minutes</option>
 				<option value="15">15 minutes</option>
@@ -37,15 +37,23 @@
 		</section>
 		<section>
 			<h3>Desktop notifications</h3>
-			<label for="enableNotifs">
-				<input type="checkbox" id="enableNotifs" checked="checked" disabled="disabled" />
-				Display desktop notifications for new unread messages
-			</label>
+			<p>
+				<label for="enableNotifs">
+					<input type="checkbox" id="enableNotifs" disabled="disabled" />
+					Display desktop notifications for new unread messages
+				</label>
+			</p>
+			<p>
+				<label for="hideNotifsOnRiz">
+					<input type="checkbox" id="hideNotifsOnRiz" disabled="disabled" />
+					Do not show notifications when Rizzoma is open and active
+				</label>
+			</p>
 		</section>
 		<section>
 			<h3>Sound notifications</h3>
 			<label for="enableSound">
-				<input type="checkbox" id="enableSound" checked="checked" disabled="disabled" />
+				<input type="checkbox" id="enableSound" disabled="disabled" />
 				Play a sound when there are new unread messages
 			</label>
 		</section>

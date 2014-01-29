@@ -26,12 +26,15 @@ function processUnreadWaves(waves) {
 	
 	// Create an array for the unread wave objects.
 	var unreadWaves = [];
+	// Create an array for the unread waves' ids.
+	var unreadWaveIds = [];
 	// For each wave object,
 	for(var i = 0; i < waves.length; i++) {
 		// If this wave is unread,
 		if(waves[i].totalUnreadBlipCount > 0) {
-			// Add it to the array of unread waves.
+			// Add it to the arrays of unread waves.
 			unreadWaves.push(waves[i]);
+			unreadWaveIds.push(waves[i].waveId);
 		}
 	}
 	
@@ -42,22 +45,44 @@ function processUnreadWaves(waves) {
 	
 	chrome.storage.local.get({
 		enableNotifs: defaults.enableNotifs,
+		hideNotifsOnRiz: defaults.hideNotifsOnRiz,
 		enableSound: defaults.enableSound,
 		lastUnreadWaves: []
-	}, function(items) {
-		// If the new list of unread waves is different,
-		if(unreadWaves.join(',') !== items.lastUnreadWaves.join(',')) {
-			// If desktop notifications are enabled, display one.
-			if(items.enableNotifs) {
-				notifUnreadWaves(unreadWaves);
+	}, function(settings) {
+		chrome.tabs.query({
+			active: true,
+			currentWindow: true
+		}, function(tabs) {
+			// If not on Rizzoma or notifications allowed on Rizzoma,
+			if(!(tabs[0].url.indexOf('https://rizzoma.com/topic/') === 0 &&
+					settings.hideNotifsOnRiz)) {
+				// If the new list of unread waves is longer,
+				if(unreadWaves.length > settings.lastUnreadWaves.length ||
+						// Or the new list is not a subset of the last unread waves,
+						settings.lastUnreadWaves.join(',').indexOf(unreadWaveIds.join(',')) === -1) {
+					// If desktop notifications are enabled,
+					if(settings.enableNotifs) {
+						notifUnreadWaves(unreadWaves);
+					}
+					// If sound notifications are enabled, play a sound.
+					if(settings.enableSound && unreadWaves.length > 0) {
+						document.getElementById('notifSound').play();
+					}
+				} else if(unreadWaveIds.join(',') !== settings.lastUnreadWaves.join(',')) {
+					// If the list has changed and the last notification
+					// has not been dismissed, update the notification.
+					chrome.notifications.getAll(function(notifs) {
+						if(Object.keys(notifs).length) {
+							notifUnreadWaves(unreadWaves);
+						}
+					});
+				}
+				console.log(unreadWaveIds.join(',') !== settings.lastUnreadWaves.join(','));
 			}
-			// If sound notifications are enabled, play a sound.
-			if(items.enableSound && unreadWaves.length > 0) {
-				document.getElementById('notifSound').play();
-			}
-		}
-		chrome.storage.local.set({
-			lastUnreadWaves: unreadWaves
+			
+			chrome.storage.local.set({
+				lastUnreadWaves: unreadWaveIds
+			});
 		});
 	});
 }
@@ -65,6 +90,11 @@ function processUnreadWaves(waves) {
 function notifUnreadWaves(unreadWaves) {
 	if(unreadWaves.length === 1) {
 		// If there is only one unread wave, display its data as a basic notification.
+		
+		// Dismiss any existing multi notification.
+		chrome.notifications.clear('multi');
+		
+		// Create the notification.
 		chrome.notifications.create(unreadWaves[0].waveId, {
 			type: 'basic',
 			title: unreadWaves[0].title,
@@ -81,6 +111,11 @@ function notifUnreadWaves(unreadWaves) {
 	} else if(unreadWaves.length > 1) {
 		// If there are multiple unread waves, display their data as a list notification.
 		
+		// Dismiss any existing single notification.
+		chrome.notifications.getAll(function(notifs) {
+			chrome.notifications.clear(Object.keys(notifs)[0]);
+		});
+		
 		// Create an array for the notification items.
 		var notifItems = [];
 		// For each unread wave,
@@ -92,6 +127,7 @@ function notifUnreadWaves(unreadWaves) {
 			});
 		}
 		
+		// Create the notification.
 		chrome.notifications.create('multi', {
 			type: 'list',
 			title: notifItems.length + ' new messages',
@@ -149,16 +185,25 @@ chrome.notifications.onClicked.addListener(function(notificationId) {
 	chrome.notifications.clear(notificationId, function(){});
 });
 
-window.addEventListener('load', function() {
-	console.log('Extension started.');
-	chrome.browserAction.onClicked.addListener(function(tab) {
-		fetchNewUnreadWaves(processUnreadWaves, updateFailed);
-		loadRizTab('');
-	});
-	makeIFrame();
+chrome.browserAction.onClicked.addListener(function(tab) {
 	fetchNewUnreadWaves(processUnreadWaves, updateFailed);
-	updateAlarm();
+	loadRizTab('');
+});
+
+window.addEventListener('load', function() {
+	makeIFrame();
 }, false);
+
+chrome.runtime.onStartup.addListener(function() {
+	console.log('Extension started.');
+	chrome.storage.local.set({
+		lastUnreadWaves: []
+	});
+	window.addEventListener('load', function() {
+		fetchNewUnreadWaves(processUnreadWaves, updateFailed);
+		updateAlarm();
+	}, false);
+});
 
 /*chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 	if(message === 'GET_ACCESS_TOKEN') {
