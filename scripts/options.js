@@ -1,6 +1,11 @@
 
 
 function init() {
+	// Display the extension version number.
+	document.getElementById("versionNumber").innerText =
+		"Version " +
+		chrome.runtime.getManifest().version;
+	
 	loadOSStyles();
 	setUpChromeLinks();
 	setUpEventListeners();
