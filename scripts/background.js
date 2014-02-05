@@ -98,19 +98,23 @@ function notifUnreadWaves(unreadWaves) {
 			}
 		});
 		
-		// Create the notification.
-		chrome.notifications.create(unreadWaves[0].waveId, {
-			type: 'basic',
-			title: unreadWaves[0].title,
-			message: unreadWaves[0].snippet,
-			iconUrl: chrome.extension.getURL('/images/notif_icon_128.png')
-		}, function(notifId) {
-			if(chrome.runtime.lastError) {
-				console.error('Error creating notification \"' + notifId + '\": ');
-				console.error(chrome.runtime.lastError);
-			} else {
-				console.log('Notification \"' + notifId + '\" successfully created.');
-			}
+		// Load the avatar URL.
+		resToBlob(unreadWaves[0].avatar, function(avatarBlobURL) {
+			// Create the notification.
+			chrome.notifications.create(unreadWaves[0].waveId, {
+				type: 'basic',
+				title: unreadWaves[0].title,
+				message: unreadWaves[0].snippet,
+				//iconUrl: chrome.extension.getURL('/images/notif_icon_128.png')
+				iconUrl: avatarBlobURL
+			}, function(notifId) {
+				if(chrome.runtime.lastError) {
+					console.error('Error creating notification \"' + notifId + '\": ');
+					console.error(chrome.runtime.lastError);
+				} else {
+					console.log('Notification \"' + notifId + '\" successfully created.');
+				}
+			});
 		});
 	} else if(unreadWaves.length > 1) {
 		// If there are multiple unread waves, display their data as a list notification.

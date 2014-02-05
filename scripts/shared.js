@@ -107,3 +107,18 @@ function loadRizTab(waveId) {
 		}
 	});
 }
+
+/**
+ * Load an external resource and return it as a blob URL.
+ * @param {String} url - The URL from which to load the resource
+ * @param {Function} callback - The function to which to send the blob URL
+ */
+function resToBlob(url, callback) {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', url, true);
+	xhr.responseType = 'blob';
+	xhr.onload = function(e) {
+		callback(webkitURL.createObjectURL(xhr.response));
+	};
+	xhr.send();
+}
