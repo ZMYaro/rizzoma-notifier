@@ -92,7 +92,11 @@ function notifUnreadWaves(unreadWaves) {
 		// If there is only one unread wave, display its data as a basic notification.
 		
 		// Dismiss any existing multi notification.
-		chrome.notifications.clear('multi');
+		chrome.notifications.getAll(function(notifs) {
+			if('multi' in notifs) {
+				chrome.notifications.clear('multi', function() {});
+			}
+		});
 		
 		// Create the notification.
 		chrome.notifications.create(unreadWaves[0].waveId, {
@@ -111,9 +115,11 @@ function notifUnreadWaves(unreadWaves) {
 	} else if(unreadWaves.length > 1) {
 		// If there are multiple unread waves, display their data as a list notification.
 		
-		// Dismiss any existing single notification.
+		// Dismiss any existing single notification(s).
 		chrome.notifications.getAll(function(notifs) {
-			chrome.notifications.clear(Object.keys(notifs)[0]);
+			for(notif in notifs) {
+				chrome.notifications.clear(notif, function() {});
+			}
 		});
 		
 		// Create an array for the notification items.
