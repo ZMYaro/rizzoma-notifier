@@ -88,15 +88,11 @@ function processUnreadWaves(waves) {
 }
 
 function notifUnreadWaves(unreadWaves) {
+	// Dismiss any existing notifications.
+	clearAllNotifs();
+	
 	if(unreadWaves.length === 1) {
 		// If there is only one unread wave, display its data as a basic notification.
-		
-		// Dismiss any existing multi notification.
-		chrome.notifications.getAll(function(notifs) {
-			if('multi' in notifs) {
-				chrome.notifications.clear('multi', function() {});
-			}
-		});
 		
 		// Load the avatar URL.
 		resToBlob(unreadWaves[0].avatar, function(avatarBlobURL) {
@@ -118,13 +114,6 @@ function notifUnreadWaves(unreadWaves) {
 		});
 	} else if(unreadWaves.length > 1) {
 		// If there are multiple unread waves, display their data as a list notification.
-		
-		// Dismiss any existing single notification(s).
-		chrome.notifications.getAll(function(notifs) {
-			for(notif in notifs) {
-				chrome.notifications.clear(notif, function() {});
-			}
-		});
 		
 		// Create an array for the notification items.
 		var notifItems = [];
@@ -153,6 +142,17 @@ function notifUnreadWaves(unreadWaves) {
 			}
 		});
 	}
+}
+
+/**
+ * Dismiss any existing notifications.
+ */
+function clearAllNotifs() {
+	chrome.notifications.getAll(function(notifs) {
+		for(notif in notifs) {
+			chrome.notifications.clear(notif, function() {});
+		}
+	});
 }
 
 /**
