@@ -25,7 +25,7 @@ function updateAlarm() {
 		refreshTime: defaults.refreshTime
 	}, function(items) {
 		chrome.alarms.create(REFRESH_ALARM_NAME, {
-			periodInMinutes: items.refreshTime
+			periodInMinutes: parseInt(items.refreshTime)
 		});
 	});
 }
