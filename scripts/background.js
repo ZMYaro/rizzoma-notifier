@@ -43,45 +43,48 @@ function processUnreadWaves(waves) {
 	// Update the browser action with the new unread count.
 	updateBrowserAction(unreadWaves.length);
 	
-	chrome.storage.local.get({
+	chrome.storage.sync.get({
 		enableNotifs: defaults.enableNotifs,
 		hideNotifsOnRiz: defaults.hideNotifsOnRiz,
-		enableSound: defaults.enableSound,
-		lastUnreadWaves: []
+		enableSound: defaults.enableSound
 	}, function(settings) {
-		chrome.tabs.query({
-			active: true,
-			currentWindow: true
-		}, function(tabs) {
-			// If not on Rizzoma or notifications allowed on Rizzoma,
-			if(!(tabs[0].url.indexOf('https://rizzoma.com/topic/') === 0 &&
-					settings.hideNotifsOnRiz)) {
-				// If the new list of unread waves is longer,
-				if(unreadWaves.length > settings.lastUnreadWaves.length ||
-						// Or the new list is not a subset of the last unread waves,
-						settings.lastUnreadWaves.join(',').indexOf(unreadWaveIds.join(',')) === -1) {
-					// If desktop notifications are enabled,
-					if(settings.enableNotifs) {
-						notifUnreadWaves(unreadWaves);
-					}
-					// If sound notifications are enabled, play a sound.
-					if(settings.enableSound && unreadWaves.length > 0) {
-						document.getElementById('notifSound').play();
-					}
-				} else if(unreadWaveIds.join(',') !== settings.lastUnreadWaves.join(',')) {
-					// If the list has changed and the last notification
-					// has not been dismissed, update the notification.
-					chrome.notifications.getAll(function(notifs) {
-						if(Object.keys(notifs).length) {
+		chrome.storage.local.get({
+			lastUnreadWaves: []
+		}, function(items) {
+			chrome.tabs.query({
+				active: true,
+				currentWindow: true
+			}, function(tabs) {
+				// If not on Rizzoma or notifications allowed on Rizzoma,
+				if(!(tabs[0].url.indexOf('https://rizzoma.com/topic/') === 0 &&
+						settings.hideNotifsOnRiz)) {
+					// If the new list of unread waves is longer,
+					if(unreadWaves.length > items.lastUnreadWaves.length ||
+							// Or the new list is not a subset of the last unread waves,
+							items.lastUnreadWaves.join(',').indexOf(unreadWaveIds.join(',')) === -1) {
+						// If desktop notifications are enabled,
+						if(settings.enableNotifs) {
 							notifUnreadWaves(unreadWaves);
 						}
-					});
+						// If sound notifications are enabled, play a sound.
+						if(settings.enableSound && unreadWaves.length > 0) {
+							document.getElementById('notifSound').play();
+						}
+					} else if(unreadWaveIds.join(',') !== items.lastUnreadWaves.join(',')) {
+						// If the list has changed and the last notification
+						// has not been dismissed, update the notification.
+						chrome.notifications.getAll(function(notifs) {
+							if(Object.keys(notifs).length) {
+								notifUnreadWaves(unreadWaves);
+							}
+						});
+					}
+					console.log(unreadWaveIds.join(',') !== items.lastUnreadWaves.join(','));
 				}
-				console.log(unreadWaveIds.join(',') !== settings.lastUnreadWaves.join(','));
-			}
-			
-			chrome.storage.local.set({
-				lastUnreadWaves: unreadWaveIds
+				
+				chrome.storage.local.set({
+					lastUnreadWaves: unreadWaveIds
+				});
 			});
 		});
 	});

@@ -21,7 +21,7 @@ var defaults = {
 };
 
 function updateAlarm() {
-	chrome.storage.local.get({
+	chrome.storage.sync.get({
 		refreshTime: defaults.refreshTime
 	}, function(items) {
 		chrome.alarms.create(REFRESH_ALARM_NAME, {
@@ -122,3 +122,10 @@ function resToBlob(url, callback) {
 	};
 	xhr.send();
 }
+
+
+// Move settings from local storage to synced storage.
+chrome.storage.local.get(Object.keys(defaults), function(items) {
+	chrome.storage.sync.set(items);
+	chrome.storage.local.remove(Object.keys(items));
+});

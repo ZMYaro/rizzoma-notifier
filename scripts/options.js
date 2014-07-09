@@ -59,7 +59,7 @@ function setSetting(e) {
 	} else {
 		newSetting[e.target.id] = e.target.value;
 	}
-	chrome.storage.local.set(newSetting, function() {
+	chrome.storage.sync.set(newSetting, function() {
 		if(chrome.runtime.lastError) {
 			alert("Something went wrong: " + chrome.runtime.lastError);
 		}
@@ -67,7 +67,7 @@ function setSetting(e) {
 }
 
 function loadSavedOptions() {
-	chrome.storage.local.get(defaults, function(settings) {
+	chrome.storage.sync.get(defaults, function(settings) {
 		// For each setting,
 		for(setting in settings) {
 			// Get its form element.
